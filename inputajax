@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<script src="https://cdn.bootcss.com/vue-resource/1.3.3/vue-resource.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<style type="text/css">
+
+		</style>
+		<div class="form">
+			<select name="" v-model="form.province">
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="14">13</option>
+			</select>
+			<input type="text" v-model.trim="form.salary" />
+			<span @click="save">保存</span>
+		</div>
+
+		<script>
+			new Vue({
+				el: '.form',
+				data: {
+					form: {
+						province: '',
+						salary: ''
+					},
+					saveUrl: 'http://172.16.3.163/Shopowner/src/html/special/20170521/date_temp/test.php',
+				},
+				methods: {
+					save: function() {
+						var reg = /^\d+$/,
+							valid = reg.test(this.form.salary);
+						if(!valid) {
+							console.log("请输入数字");
+							return;
+						}
+						this.$http.post(this.saveUrl, this.form)
+							.then((response) => {
+								console.log(response.body);
+							})
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>
