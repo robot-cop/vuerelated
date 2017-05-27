@@ -1,0 +1,202 @@
+<html>
+
+	<head>
+		<title>HTML5手机视频弹幕文字评论代码</title>
+		<meta charset="UTF-8"><br />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+		<style>
+			body {
+				background-color: pink;
+			}
+			
+			.d_show {
+				position: relative;
+				z-index: 2;
+				padding: 0 10px;
+				height: 14rem;
+				overflow: hidden;
+			}
+			
+			.d_show div {
+				font-size: 12px;
+				color: #fff;
+				line-height: 20px;
+			}
+			
+			.NYwishes {
+				width: 255px;
+				height: 300px;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				background: rgba(0, 0, 0, .6);
+			}
+			
+			.NYwishes h2 {
+				margin: 5px 0;
+				font-family: "微软雅黑";
+				font-size: 18px;
+				text-align: center;
+				color: #fff;
+			}
+			
+			.NYwishes .send {
+				position: absolute;
+				left: 0%;
+				bottom: 0px;
+				height: 40px;
+				width: 100%;
+				z-index: 99999;
+				padding-left: 5%;
+				display: flex;
+			}
+			
+			.NYwishes input {
+				font-size: 1em;
+				height: 30px;
+				line-height: 30px;
+				text-align: center;
+				box-sizing: border-box;
+				border: 1px solid #FE0002;
+				border-radius: 4px 0 0 4px;
+				width: 155px;
+			}
+			
+			.NYwishes a {
+				background-color: #FE0000;
+				color: #fff;
+				width: 80px;
+				height: 30px;
+				display: inline-block;
+				text-align: center;
+				line-height: 30px;
+				cursor: pointer;
+				border-radius: 0 4px 4px 0;
+			}
+			/*vue 过度*/
+			
+			.list-item {
+				width: 100%;
+				height: 2rem;
+				overflow: hidden;
+				color: #fff;
+				background: rgba(1, 1, 1, .4);
+				border-radius: 5px;
+				box-sizing: border-box;
+				margin: 5px 0;
+				padding: 5px;
+			}
+			
+			.list-enter-active,
+			.list-leave-active {
+				transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+			}
+			
+			.list-leave-active {
+				width: 0;
+				height: 0;
+				opacity: 0;
+				margin: 0;
+				padding: 0;
+			}
+			
+			.list-enter {
+				opacity: 0;
+			}
+		</style>
+	</head>
+
+	<body style="padding:0px;margin:0px;">
+		<div class="NYwishes" id="replies">
+
+			<h2>{{replyTitle}}</h2>
+			<div class="d_show">
+				<transition-group name="list" tag="div">
+					<div v-for="item in replies" v-bind:key="item" class="list-item">
+						{{ item }}
+					</div>
+				</transition-group>
+
+			</div>
+			<div class="send">
+				<input id="reply-write" v-model="content" name="content" type="text" value="" :placeholder="replyPlaceholder" @keyup.enter="">
+				<a @click="sendReply">{{replaySend}}</a>
+			</div>
+		</div>
+		<script>
+	
+
+			var app = new Vue({
+				el: "#replies",
+				data: {
+					replyTitle: "评论",
+					replies: [],
+					ajaxReplies: [
+						'张三：幸福吉祥把你抱1',
+						'张三：幸福吉祥把你抱2',
+						'张三：幸福吉祥把你抱3',
+						'张三：幸福吉祥把你抱4',
+						'张三：幸福吉祥把你抱5',
+						'张三：幸福吉祥把你抱6',
+						'张三：幸福吉祥把你抱7',
+						'张三：幸福吉祥把你抱8',
+					],
+					name: "赵四",
+					replyPlaceholder: "写评论",
+					replaySend: "发送弹幕",
+					content: "",
+					show: true,
+					first: "",
+				},
+				mounted: function() {
+					this.repliesAnimate();
+				},
+				methods: {
+					sendReply: function() {
+						this.show = !this.show;
+
+						if(this.content == "") {
+							alert("请输入弹幕", 0)
+							return false;
+						}
+						var message = this.content;
+						this.replies.splice(6, 0, this.name + "：" + message);
+						this.content = "";
+						console.log('发送方法：' + this.name + ": " + message);
+					},
+					inputEnter: function() {
+						this.sendReply();
+					},
+					add: function() {
+						this.replies.push(this.first);
+					},
+					remove: function() {
+						this.first = this.replies.shift();
+					},
+					repliesAnimate: function() {
+						this.replies.push(this.ajaxReplies.shift());
+						this.intervalid1 = setInterval(() => {
+							if(this.replies.length > 5) {
+								if(this.ajaxReplies.length>0){
+									this.replies = this.replies.concat(this.ajaxReplies);
+									this.ajaxReplies = [];
+								}
+								this.remove();
+								var timeout = setTimeout(() => {
+									this.add();
+									clearTimeout(timeout);
+								}, 1000)
+							} else {
+								this.replies.push(this.ajaxReplies.shift());
+							}
+						}, 2000)
+					}
+				}
+			})
+		</script>
+
+	</body>
+
+</html>
